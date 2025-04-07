@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="edu.pract5.tfgfer.ui.main.HomeFragment"
+        android:label="Últimos episodios"
+        tools:ignore="HardcodedText" />
+
+    <fragment
+        android:id="@+id/nav_search"
+        android:name="edu.pract5.tfgfer.ui.search.SearchFragment"
+        android:label="Buscar"
+        tools:ignore="HardcodedText" />
+
+    <fragment
+        android:id="@+id/nav_favorites"
+        android:name="edu.pract5.tfgfer.ui.favorites.FavoritesFragment"
+        android:label="Favoritos"
+        tools:ignore="HardcodedText" />
+</navigation>

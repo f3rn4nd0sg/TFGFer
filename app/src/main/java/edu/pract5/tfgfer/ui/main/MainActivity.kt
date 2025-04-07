@@ -14,12 +14,11 @@ import edu.pract5.tfgfer.data.RemoteDataSource
 import edu.pract5.tfgfer.data.Repository
 import edu.pract5.tfgfer.databinding.ActivityMainBinding
 import edu.pract5.tfgfer.ui.LatestEpisodesAdapter
-import edu.pract5.tfgfer.ui.adapters.AnimeAdapter
 import edu.pract5.tfgfer.ui.episodeDetail.EpisodeDetailActivity
 import kotlinx.coroutines.launch
 
+//TODO, esta será la pagina principal igual toca migrar a fragment para más comodidad
 class MainActivity : AppCompatActivity() {
-    private lateinit var animeAdapter: AnimeAdapter
     private lateinit var binding: ActivityMainBinding
     private val vm: MainViewModel by viewModels {
         MainViewModelFactory(Repository(RemoteDataSource()))
@@ -43,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         val recyclerView = binding.recyclerView
         recyclerView.layoutManager = GridLayoutManager(this, 2)
 
-        lifecycleScope.launch { //TODO arreglar lo del intent
+        lifecycleScope.launch {
             vm.currentLatestEpisodes.collect { latestEpisodes ->
                 recyclerView.adapter = LatestEpisodesAdapter(latestEpisodes) { episode ->
                     val intent = Intent(this@MainActivity, EpisodeDetailActivity::class.java).apply {
