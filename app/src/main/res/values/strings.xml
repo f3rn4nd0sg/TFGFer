@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">TFGFer</string>
+    <string name="latest_episodes">Latest Episodes</string>
+    <string name="episodios">Episodios</string>
+    <string name="animeflv">AnimeFlv</string>
+    <string name="marcar_como_favorito">Marcar como favorito</string>
+    <string name="marcar_como_visto">Marcar como visto</string>
+    <string name="descargar">Descargar</string>
+    <string name="g_neros">Géneros</string>
+    <string name="inicio">Inicio</string>
+    <string name="buscar">Buscar</string>
+    <string name="favoritos">Favoritos</string>
+</resources>
