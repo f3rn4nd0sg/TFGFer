@@ -27,9 +27,12 @@
         <activity
             android:name=".ui.episodeDetail.EpisodeDetailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize">
-    </activity>
+        </activity>
+        <activity
+            android:name=".ui.search.SearchActivity"
+            android:exported="false" />
 
 
-</application>
+    </application>
 
 </manifest>

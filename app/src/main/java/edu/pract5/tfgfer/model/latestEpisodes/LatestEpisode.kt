@@ -4,12 +4,12 @@ import com.google.gson.annotations.SerializedName
 
 data class LatestEpisode(
     @SerializedName("data")
-    val data: List<EpisodeData>,
+    val data: List<LatestEpisodeItem>,
     @SerializedName("success")
     val success: Boolean
 )
 
-data class EpisodeData(
+data class LatestEpisodeItem(
     @SerializedName("title")
     val title: String,
     @SerializedName("number")

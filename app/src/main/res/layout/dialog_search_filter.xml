@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dialog_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    tools:context=".ui.search.SearchFilterDialog">
+
+    <!-- Título del diálogo -->
+    <TextView
+        android:id="@+id/tvDialogTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Filtrar Búsqueda"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- RadioGroup para el orden de búsqueda -->
+    <RadioGroup
+        android:id="@+id/radioGroupOrder"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/tvDialogTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp">
+
+        <RadioButton
+            android:id="@+id/radioDefault"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Predeterminado"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/radioUpdated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Más Actualizado" />
+
+        <RadioButton
+            android:id="@+id/radioAdded"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Más Añadido" />
+
+        <RadioButton
+            android:id="@+id/radioTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Por Título" />
+
+        <RadioButton
+            android:id="@+id/radioRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Por Calificación" />
+    </RadioGroup>
+
+    <!-- Contenedor para CheckBox de Tipos -->
+    <LinearLayout
+        android:id="@+id/layoutTypes"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/radioGroupOrder"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp">
+
+        <CheckBox
+            android:id="@+id/checkboxTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TV" />
+
+        <CheckBox
+            android:id="@+id/checkboxMovie"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Película" />
+
+        <CheckBox
+            android:id="@+id/checkboxSpecial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Especial" />
+
+        <CheckBox
+            android:id="@+id/checkboxOva"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OVA" />
+    </LinearLayout>
+
+    <!-- Contenedor para CheckBox de Géneros -->
+    <LinearLayout
+        android:id="@+id/layoutGenres"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/layoutTypes"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp">
+
+        <CheckBox
+            android:id="@+id/checkboxAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Acción" />
+
+        <CheckBox
+            android:id="@+id/checkboxComedy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Comedia" />
+
+        <CheckBox
+            android:id="@+id/checkboxDrama"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Drama" />
+
+        <CheckBox
+            android:id="@+id/checkboxFantasy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fantasía" />
+    </LinearLayout>
+
+    <!-- Contenedor para CheckBox de Estados -->
+    <LinearLayout
+        android:id="@+id/layoutStatuses"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/layoutGenres"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp">
+
+        <CheckBox
+            android:id="@+id/checkboxOnAir"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="En emisión" />
+
+        <CheckBox
+            android:id="@+id/checkboxFinished"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Terminado" />
+
+        <CheckBox
+            android:id="@+id/checkboxNotAired"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Emitido" />
+    </LinearLayout>
+
+    <!-- Contenedor para los Botones (Aplicar y Cancelar) -->
+    <LinearLayout
+        android:id="@+id/layoutButtons"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        app:layout_constraintTop_toBottomOf="@id/layoutStatuses"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/btnApply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aplicar" />
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancelar"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -10,4 +10,7 @@
     <string name="inicio">Inicio</string>
     <string name="buscar">Buscar</string>
     <string name="favoritos">Favoritos</string>
+    <string name="search">buscar\n</string>
+    <string name="filter">filtrar\n</string>
+    <string name="anime_title">Anime Title</string>
 </resources>

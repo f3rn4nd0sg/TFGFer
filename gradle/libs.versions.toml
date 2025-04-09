@@ -19,6 +19,8 @@ navigationUiKtx = "2.8.9"
 retrofit = "2.11.0"
 swiperefreshlayout = "1.1.0"
 media3Ui = "1.6.0"
+playServicesAppsearch = "16.0.1"
+lifecycleViewmodelAndroid = "2.8.7"
 
 
 
@@ -42,6 +44,8 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 material-v1120 = { module = "com.google.android.material:material", version.ref = "materialVersion" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3Ui" }
+play-services-appsearch = { group = "com.google.android.gms", name = "play-services-appsearch", version.ref = "playServicesAppsearch" }
+androidx-lifecycle-viewmodel-android = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-android", version.ref = "lifecycleViewmodelAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
