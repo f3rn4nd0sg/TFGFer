@@ -7,17 +7,73 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import edu.pract5.tfgfer.databinding.DialogSearchFilterBinding
+import edu.pract5.tfgfer.databinding.ItemFilterCheckboxBinding
+import edu.pract5.tfgfer.model.busqueda.FilterItem
 
 class SearchFilterDialog : DialogFragment() {
-    private lateinit var binding: DialogSearchFilterBinding
+    private var _binding: DialogSearchFilterBinding? = null
+    private val binding get() = _binding!!
+
+    // Listas de filtros
+    private val orderOptions = listOf(
+        FilterItem("default", "Predeterminado", true),
+        FilterItem("updated", "Más Actualizado"),
+        FilterItem("added", "Más Añadido"),
+        FilterItem("title", "Por Título"),
+        FilterItem("rating", "Por Calificación")
+    )
+
+    private val typesList = listOf(
+        FilterItem("tv", "TV"),
+        FilterItem("movie", "Película"),
+        FilterItem("ova", "OVA"),
+        FilterItem("special", "Especial")
+    )
+
+    private val genresList = listOf(
+        FilterItem("action", "Acción"),
+        FilterItem("adventure", "Aventuras"),
+        FilterItem("comedy", "Comedia"),
+        FilterItem("drama", "Drama"),
+        FilterItem("fantasy", "Fantasía"),
+        FilterItem("sci_fi", "Ciencia Ficción"),
+        FilterItem("horror", "Terror"),
+        FilterItem("romance", "Romance"),
+        FilterItem("shounen", "Shounen"),
+        FilterItem("shoujo", "Shoujo")
+    )
+
+    private val statusList = listOf(
+        FilterItem("on_air", "En emisión"),
+        FilterItem("finished", "Terminado"),
+        FilterItem("not_aired", "No emitido")
+    )
+
+    // Variables para mantener el estado seleccionado
+    private var selectedOrder: String = "default"
+    private val selectedTypes = mutableListOf<String>()
+    private val selectedGenres = mutableListOf<String>()
+    private val selectedStatuses = mutableListOf<String>()
+
+    // Mapeo de estados a valores numéricos
+    private val statusConversion = mapOf(
+        "on_air" to 1,
+        "finished" to 2,
+        "not_aired" to 3
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DialogSearchFilterBinding.inflate(inflater, container, false)
+        _binding = DialogSearchFilterBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -26,22 +82,26 @@ class SearchFilterDialog : DialogFragment() {
         dialog.setTitle("Filtrar búsqueda")
         return dialog
     }
+
     override fun onStart() {
         super.onStart()
         dialog?.window?.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
+            (resources.displayMetrics.heightPixels * 0.9).toInt() // 90% de la pantalla
         )
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Lógica para aplicar los filtros
-        binding.btnApply.setOnClickListener {
-            // Orden de búsqueda seleccionado
-            val order = when (binding.radioGroupOrder.checkedRadioButtonId) {
+        setupOrderOptions()
+        setupRecyclerViews()
+        setupButtons()
+    }
+
+    private fun setupOrderOptions() {
+        binding.radioGroupOrder.setOnCheckedChangeListener { _, checkedId ->
+            selectedOrder = when (checkedId) {
                 binding.radioDefault.id -> "default"
                 binding.radioUpdated.id -> "updated"
                 binding.radioAdded.id -> "added"
@@ -49,47 +109,106 @@ class SearchFilterDialog : DialogFragment() {
                 binding.radioRating.id -> "rating"
                 else -> "default"
             }
+        }
+    }
 
-            // Recopilación de tipos seleccionados (TV, Película, etc.)
-            val types = mutableListOf<String>().apply {
-                if (binding.checkboxTv.isChecked) add("tv")
-                if (binding.checkboxMovie.isChecked) add("movie")
-                if (binding.checkboxSpecial.isChecked) add("special")
-                if (binding.checkboxOva.isChecked) add("ova")
-            }.takeIf { it.isNotEmpty() }
-
-            // Recopilación de géneros seleccionados
-            val genres = mutableListOf<String>().apply {
-                if (binding.checkboxAction.isChecked) add("action")
-                if (binding.checkboxComedy.isChecked) add("comedy")
-                if (binding.checkboxDrama.isChecked) add("drama")
-                if (binding.checkboxFantasy.isChecked) add("fantasy")
+    private fun setupRecyclerViews() {
+        // Configuración común para todos los RecyclerViews
+        fun setupRecyclerView(recyclerView: RecyclerView, items: List<FilterItem>) {
+            val layoutManager = FlexboxLayoutManager(requireContext()).apply {
+                flexWrap = FlexWrap.WRAP
+                flexDirection = FlexDirection.ROW
+                justifyContent = JustifyContent.FLEX_START
             }
 
-            // Recopilación de estados seleccionados
-            val statuses = mutableListOf<Int>().apply {
-                if (binding.checkboxOnAir.isChecked) add(1)  // Estado "En emisión"
-                if (binding.checkboxFinished.isChecked) add(2)  // Estado "Terminado"
-                if (binding.checkboxNotAired.isChecked) add(3)  // Estado "No emitido"
+            recyclerView.layoutManager = layoutManager
+            recyclerView.adapter = FilterAdapter(items) { item, isChecked ->
+                if (isChecked) {
+                    when (recyclerView) {
+                        binding.rvTypes -> selectedTypes.add(item.id)
+                        binding.rvGenres -> selectedGenres.add(item.id)
+                        binding.rvStatuses -> selectedStatuses.add(item.id)
+                    }
+                } else {
+                    when (recyclerView) {
+                        binding.rvTypes -> selectedTypes.remove(item.id)
+                        binding.rvGenres -> selectedGenres.remove(item.id)
+                        binding.rvStatuses -> selectedStatuses.remove(item.id)
+                    }
+                }
             }
-
-            // Llamar al métod0 de la actividad para realizar la búsqueda con filtros
-            (activity as? SearchActivity)?.vm?.searchWithFilters(
-                order = order,
-                types = types,
-                genres = genres,
-                statuses = statuses
-            )
-            Log.d("SearchFilterDialog", "Filtros aplicados: order=$order, types=$types, genres=$genres, statuses=$statuses")
-
-            dismiss()  // Cerrar el diálogo
         }
 
-        // Acción al cancelar los filtros
+        setupRecyclerView(binding.rvTypes, typesList)
+        setupRecyclerView(binding.rvGenres, genresList)
+        setupRecyclerView(binding.rvStatuses, statusList)
+    }
+
+    private fun setupButtons() {
+        binding.btnApply.setOnClickListener {
+            Log.d("SearchFilterDialog",
+                "Filtros aplicados: " +
+                        "order=$selectedOrder, " +
+                        "types=$selectedTypes, " +
+                        "genres=$selectedGenres, " +
+                        "statuses=$selectedStatuses")
+
+            // Convertir los estados seleccionados a sus valores numéricos
+            val statusInts = if (selectedStatuses.isNotEmpty()) {
+                selectedStatuses.mapNotNull { statusConversion[it] }
+            } else {
+                emptyList()
+            }
+
+            // Llamar al métod0  de búsqueda, enviando listas incluso si están vacías
+            (activity as? SearchActivity)?.vm?.searchWithFilters(
+                order = selectedOrder,
+                types = selectedTypes.takeIf { it.isNotEmpty() },
+                genres = selectedGenres.takeIf { it.isNotEmpty() },
+                statuses = statusInts
+            )
+
+            dismiss()
+        }
+
         binding.btnCancel.setOnClickListener {
             dismiss()
         }
     }
+
+    private inner class FilterAdapter(
+        private val items: List<FilterItem>,
+        private val onItemChecked: (FilterItem, Boolean) -> Unit
+    ) : RecyclerView.Adapter<FilterAdapter.ViewHolder>() {
+
+        inner class ViewHolder(val binding: ItemFilterCheckboxBinding) :
+            RecyclerView.ViewHolder(binding.root)
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val binding = ItemFilterCheckboxBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+            return ViewHolder(binding)
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val item = items[position]
+            holder.binding.checkboxItem.apply {
+                text = item.name
+                isChecked = item.selected
+                setOnCheckedChangeListener { _, isChecked ->
+                    item.selected = isChecked
+                    onItemChecked(item, isChecked)
+                }
+            }
+        }
+        override fun getItemCount() = items.size
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
-
-

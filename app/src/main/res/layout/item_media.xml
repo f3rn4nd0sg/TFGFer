@@ -1,53 +1,65 @@
-<!-- item_media.xml -->
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:elevation="4dp"
-    android:layout_gravity="center">
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="160dp"
+    android:layout_height="250dp"
+    android:layout_margin="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
 
-    <LinearLayout
+    <!-- Usamos RelativeLayout para superponer el degradado y las etiquetas sobre la imagen -->
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="8dp">
+        android:layout_height="match_parent">
 
+        <!-- Portada en full-bleed -->
         <ImageView
             android:id="@+id/ivCover"
             android:layout_width="match_parent"
-            android:layout_height="200dp" />
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true" />
 
+        <!-- Etiqueta de rating en la esquina superior izquierda -->
+
+        <!-- Etiqueta de tipo en la esquina superior derecha -->
+        <TextView
+            android:id="@+id/tvType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="4dp"
+            android:padding="2dp"
+            android:background="@drawable/bg_type"
+            android:text="TV"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <!-- Degradado en la parte inferior para mejorar la legibilidad del título -->
+        <View
+            android:id="@+id/overlay"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/gradient_overlay" />
+
+        <!-- Título del anime superpuesto en la parte inferior -->
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:padding="6dp"
             android:text="Anime Title"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:paddingTop="8dp" />
-
-        <TextView
-            android:id="@+id/tvSynopsis"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Anime Synopsis"
+            android:textColor="@android:color/white"
             android:textSize="14sp"
-            android:paddingTop="4dp" />
+            android:textStyle="bold"
+            android:maxLines="2"
+            android:ellipsize="end" />
 
-        <TextView
-            android:id="@+id/tvRating"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Rating"
-            android:textSize="12sp"
-            android:paddingTop="4dp" />
-
-        <TextView
-            android:id="@+id/tvType"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Type"
-            android:textSize="12sp"
-            android:paddingTop="4dp" />
-    </LinearLayout>
+    </RelativeLayout>
 </androidx.cardview.widget.CardView>
+

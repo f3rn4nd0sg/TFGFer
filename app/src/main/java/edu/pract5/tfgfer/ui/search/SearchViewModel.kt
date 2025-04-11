@@ -38,7 +38,7 @@ class SearchViewModel(private val repository: Repository) : ViewModel() {
         page: Int = 1,
         types: List<String>? = null,
         genres: List<String>? = null,
-        statuses: List<Int>? = null
+        statuses: List<Int>
     ) {
         viewModelScope.launch {
             _isLoading.value = true
