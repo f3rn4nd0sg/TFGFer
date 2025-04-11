@@ -29,7 +29,6 @@ class SearchAdapter(
     inner class MediaViewHolder(private val binding: ItemMediaBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(media: Media) {
-            // Aquí debes vincular los datos del media con las vistas del item
             binding.tvTitle.text = media.title // Título del media
             // Cargar la portada utilizando Glide
             Glide.with(binding.ivCover.context)

@@ -1,5 +1,8 @@
 package edu.pract5.tfgfer.data
 
+import edu.pract5.tfgfer.model.busqueda.FilterRequest
+import edu.pract5.tfgfer.model.busqueda.SearchResult
+
 class RemoteDataSource {
     private val api = AnimeAPI.getRetrofit2Api()
 
@@ -21,7 +24,11 @@ class RemoteDataSource {
         types: List<String>? = null,
         genres: List<String>? = null,
         statuses: List<Int>? = null
-    ) = api.searchByFilter(order, page, types, genres, statuses)
+    ): SearchResult {
+        val body = FilterRequest(order, page, types, genres, statuses)
+        return api.searchByFilter(body)
+    }
+
 
     suspend fun searchByUrl(url: String) = api.searchByUrl(url)
 

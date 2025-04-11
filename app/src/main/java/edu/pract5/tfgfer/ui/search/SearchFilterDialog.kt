@@ -73,14 +73,12 @@ class SearchFilterDialog : DialogFragment() {
             }
 
             // Llamar al método de la actividad para realizar la búsqueda con filtros
-            (activity as? SearchActivity)?.let { activity ->
-                activity.vm.searchWithFilters(
-                    order = order,
-                    types = types,
-                    genres = genres,
-                    statuses = statuses
-                )
-            }
+            (activity as? SearchActivity)?.vm?.searchWithFilters(
+                order = order,
+                types = types,
+                genres = genres,
+                statuses = statuses
+            )
 
             dismiss()  // Cerrar el diálogo
         }

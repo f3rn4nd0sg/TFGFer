@@ -2,6 +2,9 @@ package edu.pract5.tfgfer.ui.search
 
 import android.content.Intent
 import android.os.Bundle
+import android.transition.Slide
+import android.util.Log
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -14,6 +17,7 @@ import edu.pract5.tfgfer.data.RemoteDataSource
 import edu.pract5.tfgfer.data.Repository
 import edu.pract5.tfgfer.databinding.ActivitySearchBinding
 import edu.pract5.tfgfer.ui.adapters.SearchAdapter
+import edu.pract5.tfgfer.ui.animeDetail.AnimeDetailActivity
 import edu.pract5.tfgfer.ui.main.MainActivity
 
 class SearchActivity : AppCompatActivity() {
@@ -25,24 +29,28 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        window.enterTransition = Slide(Gravity.END).apply {
+            duration = 500 // Duración de la animación
+        }
+
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Toolbar con menú
         setSupportActionBar(binding.toolbar)
-
-        // Setup del RecyclerView
         setupRecyclerView()
-
-        // Observa el ViewModel
         observeViewModel()
-
-        // Captura de búsqueda directa (por texto)
+        setupBottomNavigation()
+        // 🔍 Si no se está buscando por texto, cargar por defecto los "onAir"
         val query = intent.getStringExtra("query")
         if (!query.isNullOrEmpty()) {
             vm.search(query)
+        } else {
+            // Estado 1 = En emisión
+            vm.searchWithFilters(statuses = listOf(1))
         }
     }
+
 
     private fun setupRecyclerView() {
         binding.recyclerView.layoutManager = GridLayoutManager(this, 2)
@@ -50,13 +58,20 @@ class SearchActivity : AppCompatActivity() {
 
     private fun observeViewModel() {
         vm.searchResults.observe(this) { results ->
-            binding.recyclerView.adapter = SearchAdapter(results) { item ->
-                // Manejar clic en un item
+            Log.d("SearchActivity", "Resultados de búsqueda: $results")
+            binding.recyclerView.adapter = SearchAdapter(results) { anime ->
+                Log.d("SearchActivity", "Anime clicado: ${anime.slug}")
+
+                val intent = Intent(this, AnimeDetailActivity::class.java)
+                intent.putExtra("anime_slug", anime.slug)
+                startActivity(intent)
             }
         }
     }
+
     private fun setupBottomNavigation() {
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
+
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
@@ -64,20 +79,20 @@ class SearchActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_favorites -> {
-                    /*
-                    showFavorites()
-                    */
-                    //TODO ir a la de favoritos
+                    // TODO: ir a la de favoritos
                     true
                 }
                 R.id.nav_search -> {
-                    //Ya estamos aqui
+                    // Ya estamos aquí
                     true
                 }
                 else -> false
             }
         }
+
+        bottomNav.selectedItemId = R.id.nav_search
     }
+
 
     // Infla el menú en la toolbar
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

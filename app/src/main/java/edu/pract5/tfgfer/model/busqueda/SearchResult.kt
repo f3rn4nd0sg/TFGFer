@@ -24,4 +24,12 @@ data class Media(
     @SerializedName("url") val url: String
 )
 
+data class FilterRequest(
+    val order: String = "default",
+    @SerializedName("page") val page: Int = 1,
+    @SerializedName("types") val types: List<String>? = null,
+    @SerializedName("genres") val genres: List<String>? = emptyList(),
+    @SerializedName("statuses") val statuses: List<Int>? = null
+)
+
 
