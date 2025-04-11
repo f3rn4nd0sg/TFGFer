@@ -2,6 +2,7 @@ package edu.pract5.tfgfer.ui.search
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -72,13 +73,14 @@ class SearchFilterDialog : DialogFragment() {
                 if (binding.checkboxNotAired.isChecked) add(3)  // Estado "No emitido"
             }
 
-            // Llamar al método de la actividad para realizar la búsqueda con filtros
+            // Llamar al métod0 de la actividad para realizar la búsqueda con filtros
             (activity as? SearchActivity)?.vm?.searchWithFilters(
                 order = order,
                 types = types,
                 genres = genres,
                 statuses = statuses
             )
+            Log.d("SearchFilterDialog", "Filtros aplicados: order=$order, types=$types, genres=$genres, statuses=$statuses")
 
             dismiss()  // Cerrar el diálogo
         }

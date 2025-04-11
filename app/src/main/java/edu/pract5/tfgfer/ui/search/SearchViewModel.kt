@@ -1,5 +1,6 @@
 package edu.pract5.tfgfer.ui.search
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,7 +26,7 @@ class SearchViewModel(private val repository: Repository) : ViewModel() {
                     _searchResults.value = results
                 }
             } catch (e: Exception) {
-                // Manejar el error de manera apropiada, por ejemplo, mostrando un mensaje
+                //TODO manejar error
             } finally {
                 _isLoading.value = false
             }
@@ -44,9 +45,11 @@ class SearchViewModel(private val repository: Repository) : ViewModel() {
             try {
                 repository.searchByFilter(order, page, types, genres, statuses).collect { filteredResults ->
                     _searchResults.value = filteredResults
+
+                    Log.d("SearchViewModel", "Numero de resultados: $filteredResults.size")
                 }
             } catch (e: Exception) {
-                // Manejar el error de manera apropiada, por ejemplo, mostrando un mensaje
+                //TODO manejar error
             } finally {
                 _isLoading.value = false
             }

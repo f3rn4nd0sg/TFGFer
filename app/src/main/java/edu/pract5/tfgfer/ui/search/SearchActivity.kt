@@ -37,6 +37,12 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.fabSearch.setOnClickListener {
+            SearchFilterDialog().show(supportFragmentManager, "search_filter")
+            observeViewModel()
+        }
+
+
         setSupportActionBar(binding.toolbar)
         setupRecyclerView()
         observeViewModel()
@@ -56,7 +62,9 @@ class SearchActivity : AppCompatActivity() {
         binding.recyclerView.layoutManager = GridLayoutManager(this, 2)
     }
 
+    //Buscar y hacer click en anime
     private fun observeViewModel() {
+        //obvserva si hay cambios en la lista de resultados
         vm.searchResults.observe(this) { results ->
             Log.d("SearchActivity", "Resultados de búsqueda: $results")
             binding.recyclerView.adapter = SearchAdapter(results) { anime ->
@@ -68,7 +76,7 @@ class SearchActivity : AppCompatActivity() {
             }
         }
     }
-
+    //Funcionalidad barra de abajo
     private fun setupBottomNavigation() {
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
 
@@ -91,24 +99,6 @@ class SearchActivity : AppCompatActivity() {
         }
 
         bottomNav.selectedItemId = R.id.nav_search
-    }
-
-
-    // Infla el menú en la toolbar
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.search_toolbar_menu, menu)
-        return true
-    }
-
-    // Maneja clicks del botón de la toolbar (filtro)
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_filter -> {
-                SearchFilterDialog().show(supportFragmentManager, "FilterDialog")
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 }
 
