@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Contenido principal -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -29,6 +28,18 @@
                 android:textStyle="bold" />
         </com.google.android.material.appbar.MaterialToolbar>
 
+        <!-- Barra de búsqueda -->
+        <EditText
+            android:id="@+id/et_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Buscar por nombre..."
+            android:padding="12dp"
+            android:background="@drawable/search_edit_text_background"
+            android:drawableStart="@android:drawable/ic_menu_search"
+            android:drawablePadding="8dp"
+            android:inputType="text" />
+
         <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
@@ -36,7 +47,6 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:padding="8dp"
-            app:spanCount="2"
             tools:listitem="@layout/item_media" />
 
         <!-- Bottom Navigation -->
@@ -49,7 +59,7 @@
             app:labelVisibilityMode="labeled" />
     </LinearLayout>
 
-    <!-- FAB justo encima del BottomNavigationView -->
+    <!-- FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_search"
         android:layout_width="wrap_content"
@@ -60,4 +70,3 @@
         android:contentDescription="Buscar"
         app:srcCompat="@drawable/ic_filter"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
-

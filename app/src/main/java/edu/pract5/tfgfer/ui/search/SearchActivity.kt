@@ -2,6 +2,8 @@ package edu.pract5.tfgfer.ui.search
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.transition.Slide
 import android.util.Log
 import android.view.Gravity
@@ -28,52 +30,60 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         window.enterTransition = Slide(Gravity.END).apply {
-            duration = 500 // Duración de la animación
+            duration = 500
         }
 
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.fabSearch.setOnClickListener {
-            SearchFilterDialog().show(supportFragmentManager, "search_filter")
-            observeViewModel()
-        }
-
-
         setSupportActionBar(binding.toolbar)
         setupRecyclerView()
-        observeViewModel()
         setupBottomNavigation()
-        // 🔍 Si no se está buscando por texto, cargar por defecto los "onAir"
+        setupSearchBar()
+        observeViewModel()
+
         val query = intent.getStringExtra("query")
         if (!query.isNullOrEmpty()) {
             vm.search(query)
         } else {
-            // Estado 1 = En emisión
             vm.searchWithFilters(statuses = listOf(1))
         }
-    }
 
+        binding.fabSearch.setOnClickListener {
+            SearchFilterDialog().show(supportFragmentManager, "search_filter")
+        }
+    }
 
     private fun setupRecyclerView() {
         binding.recyclerView.layoutManager = GridLayoutManager(this, 2)
     }
 
-    //Buscar y hacer click en anime
     private fun observeViewModel() {
-        //obvserva si hay cambios en la lista de resultados
         vm.searchResults.observe(this) { results ->
             Log.d("SearchActivity", "Resultados de búsqueda: $results")
             binding.recyclerView.adapter = SearchAdapter(results) { anime ->
                 Log.d("SearchActivity", "Anime clicado: ${anime.slug}")
-
                 val intent = Intent(this, AnimeDetailActivity::class.java)
                 intent.putExtra("anime_slug", anime.slug)
                 startActivity(intent)
             }
         }
     }
-    //Funcionalidad barra de abajo
+
+    private fun setupSearchBar() {
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                val query = s.toString()
+                if (query.length >= 3) {
+                    vm.search(query)
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+    }
+
     private fun setupBottomNavigation() {
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
 
@@ -87,10 +97,7 @@ class SearchActivity : AppCompatActivity() {
                     // TODO: ir a la de favoritos
                     true
                 }
-                R.id.nav_search -> {
-                    // Ya estamos aquí
-                    true
-                }
+                R.id.nav_search -> true
                 else -> false
             }
         }
@@ -98,6 +105,7 @@ class SearchActivity : AppCompatActivity() {
         bottomNav.selectedItemId = R.id.nav_search
     }
 }
+
 
 
 
