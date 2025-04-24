@@ -1,25 +1,27 @@
 package edu.pract5.tfgfer.ui.episodeDetail
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.util.Log
+import android.view.View
+import android.view.ViewGroup
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Button
+import android.widget.FrameLayout
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import edu.pract5.tfgfer.R
-import edu.pract5.tfgfer.data.Repository
-import edu.pract5.tfgfer.data.RemoteDataSource
-import kotlinx.coroutines.launch
-import android.content.pm.ActivityInfo
-import android.util.Log
 import com.google.android.material.appbar.MaterialToolbar
+import edu.pract5.tfgfer.R
+import edu.pract5.tfgfer.data.RemoteDataSource
+import edu.pract5.tfgfer.data.Repository
 import edu.pract5.tfgfer.ui.animeDetail.AnimeDetailActivity
-
+import kotlinx.coroutines.launch
 
 class EpisodeDetailActivity : AppCompatActivity() {
 
@@ -30,6 +32,13 @@ class EpisodeDetailActivity : AppCompatActivity() {
     private lateinit var titleTextView: TextView
     private lateinit var serverTabsLayout: LinearLayout
     private lateinit var animeSlug: String
+    private lateinit var videoContainer: FrameLayout
+
+    // Variables para manejar la vista personalizada
+    private var mCustomView: View? = null
+    private var mCustomViewCallback: WebChromeClient.CustomViewCallback? = null
+    private var mOriginalOrientation: Int = 0
+    private var mOriginalSystemUiVisibility: Int = 0
 
     private val vm: EpisodeDetailViewModel by viewModels {
         EpisodeDetailViewModelFactory(Repository(RemoteDataSource()), episodeSlug, episodeNumber)
@@ -43,6 +52,7 @@ class EpisodeDetailActivity : AppCompatActivity() {
         titleTextView = findViewById(R.id.episode_title)
         webView = findViewById(R.id.webViewPlayer)
         serverTabsLayout = findViewById(R.id.serverTabs)
+        videoContainer = findViewById(R.id.videoContainer)
 
         // Obtener la URL del episodio desde el intent
         episodeUrl = intent.getStringExtra("episode_data") ?: ""
@@ -66,18 +76,46 @@ class EpisodeDetailActivity : AppCompatActivity() {
         webView.settings.mediaPlaybackRequiresUserGesture = false
         webView.webViewClient = WebViewClient()
 
-        // Configurar WebChromeClient para detectar pantalla completa
+        // Configurar WebChromeClient para gestionar la pantalla completa correctamente
         webView.webChromeClient = object : WebChromeClient() {
-            override fun onShowCustomView(view: android.view.View?, callback: CustomViewCallback?) {
-                super.onShowCustomView(view, callback)
-                // Forzar la orientación en pantalla completa
+            override fun onShowCustomView(view: View, callback: CustomViewCallback) {
+                if (mCustomView != null) {
+                    onHideCustomView()
+                    return
+                }
+                mCustomView = view
+                mOriginalSystemUiVisibility = window.decorView.systemUiVisibility
+                mOriginalOrientation = requestedOrientation
+                mCustomViewCallback = callback
+
+                // Añadir la vista personalizada al layout
+                val decor = window.decorView as FrameLayout
+                decor.addView(mCustomView, FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT))
+
+                // Configurar orientación y banderas UI
+                window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+
                 requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             }
 
             override fun onHideCustomView() {
-                super.onHideCustomView()
-                // Volver a la orientación vertical al salir de pantalla completa
-                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                // Restaurar vista original
+                val decor = window.decorView as FrameLayout
+                decor.removeView(mCustomView)
+                mCustomView = null
+
+                // Restaurar orientación y banderas UI
+                window.decorView.systemUiVisibility = mOriginalSystemUiVisibility
+                requestedOrientation = mOriginalOrientation
+                mCustomViewCallback?.onCustomViewHidden()
+                mCustomViewCallback = null
             }
         }
 
@@ -152,5 +190,13 @@ class EpisodeDetailActivity : AppCompatActivity() {
             </html>
         """.trimIndent()
         webView.loadDataWithBaseURL(null, iframeHtml, "text/html", "UTF-8", null)
+    }
+
+    override fun onBackPressed() {
+        if (mCustomView != null) {
+            webView.webChromeClient?.onHideCustomView()
+        } else {
+            super.onBackPressed()
+        }
     }
 }

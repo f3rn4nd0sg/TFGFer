@@ -41,10 +41,10 @@
                 android:id="@+id/anime_cover"
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
-                android:scaleType="centerCrop"
+                android:layout_marginTop="12dp"
                 android:background="@drawable/rounded_corners"
-                android:elevation="4dp"
-                android:layout_marginTop="12dp" />
+                android:elevation="1dp"
+                android:scaleType="centerCrop" />
 
             <!-- Título -->
             <TextView

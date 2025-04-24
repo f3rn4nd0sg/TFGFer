@@ -62,11 +62,13 @@ dependencies {
     implementation(libs.material.v1120)
 
     implementation (libs.jsoup)
-    implementation (libs.exoplayer)
 
     implementation (libs.androidx.navigation.fragment.ktx)
     implementation (libs.androidx.navigation.ui.ktx)
 
     implementation (libs.flexbox)
+
+    implementation (libs.androidx.media3.exoplayer)
+    implementation (libs.androidx.media3.ui.v121)
 
 }
