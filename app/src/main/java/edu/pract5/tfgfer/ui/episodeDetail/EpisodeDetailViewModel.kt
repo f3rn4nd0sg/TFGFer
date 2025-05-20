@@ -6,10 +6,12 @@ import edu.pract5.tfgfer.data.Repository
 import edu.pract5.tfgfer.model.episodio.Episodio
 import kotlinx.coroutines.flow.Flow
 
-class EpisodeDetailViewModel(val repository: Repository, val slug: String, val number: String) : ViewModel() {
-
-    val episodeDetail: Flow<Episodio>
-        get() = repository.fetchEpisodeBySlugAndNumber(slug, number.toInt())
+class EpisodeDetailViewModel(
+    repository: Repository,
+    slug: String,
+    number: String
+) : ViewModel() {
+    val episodeDetail: Flow<Episodio> = repository.fetchEpisodeBySlugAndNumber(slug, number.toInt())
 }
 
 @Suppress("UNCHECKED_CAST")

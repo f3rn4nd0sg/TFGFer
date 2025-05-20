@@ -11,9 +11,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import edu.pract5.tfgfer.AnimeApp
 import edu.pract5.tfgfer.R
-import edu.pract5.tfgfer.data.RemoteDataSource
-import edu.pract5.tfgfer.data.Repository
 import edu.pract5.tfgfer.databinding.ActivitySearchBinding
 import edu.pract5.tfgfer.ui.adapters.SearchAdapter
 import edu.pract5.tfgfer.ui.animeDetail.AnimeDetailActivity
@@ -23,7 +22,7 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
     val vm: SearchViewModel by viewModels {
-        SearchViewModelFactory(Repository(RemoteDataSource()))
+        SearchViewModelFactory(AnimeApp.getRepository(application))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

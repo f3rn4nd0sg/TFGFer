@@ -1,9 +1,5 @@
 package edu.pract5.tfgfer.data
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import edu.pract5.tfgfer.model.animeOnAir.AnimeOnAir
 import edu.pract5.tfgfer.model.busqueda.FilterRequest
 import edu.pract5.tfgfer.model.busqueda.SearchResult

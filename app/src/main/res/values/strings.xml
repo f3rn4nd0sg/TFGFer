@@ -13,4 +13,7 @@
     <string name="search">buscar\n</string>
     <string name="filter">filtrar\n</string>
     <string name="anime_title">Anime Title</string>
+    <string name="favorites">Favoritos</string>
+    <string name="no_favorites">Sin Favoritos</string>
+    <string name="delete_favorite">Eliminar favorito</string>
 </resources>

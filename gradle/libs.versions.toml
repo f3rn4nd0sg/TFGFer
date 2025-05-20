@@ -23,7 +23,7 @@ swiperefreshlayout = "1.1.0"
 media3Ui = "1.6.0"
 playServicesAppsearch = "16.0.1"
 lifecycleViewmodelAndroid = "2.8.7"
-
+roomKtx = "2.6.1"
 
 
 [libraries]
@@ -55,4 +55,4 @@ androidx-lifecycle-viewmodel-android = { group = "androidx.lifecycle", name = "l
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-
+devtools-ksp = { id = "com.google.devtools.ksp", version = "1.9.24-1.0.20" }

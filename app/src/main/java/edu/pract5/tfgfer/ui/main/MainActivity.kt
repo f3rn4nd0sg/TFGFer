@@ -22,11 +22,14 @@ import edu.pract5.tfgfer.ui.episodeDetail.EpisodeDetailActivity
 import edu.pract5.tfgfer.ui.search.SearchActivity
 import edu.pract5.tfgfer.ui.search.SearchFilterDialog
 import kotlinx.coroutines.launch
+import edu.pract5.tfgfer.AnimeApp
+import edu.pract5.tfgfer.ui.favorites.FavoritesActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val vm: MainViewModel by viewModels {
-        MainViewModelFactory(Repository(RemoteDataSource()))
+        val repository = AnimeApp.getRepository(application)
+        MainViewModelFactory(repository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,9 +62,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_favorites -> {
-                    /*
-                    showFavorites()
-                    */
+                    startActivity(Intent(this, FavoritesActivity::class.java))
                     true
                 }
                 R.id.nav_search -> {

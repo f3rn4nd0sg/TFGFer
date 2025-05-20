@@ -5,10 +5,11 @@ import edu.pract5.tfgfer.model.busqueda.Media
 import edu.pract5.tfgfer.model.episodio.Episodio
 import edu.pract5.tfgfer.model.latestEpisodes.LatestEpisodeItem
 import edu.pract5.tfgfer.model.serie.Anime
+import edu.pract5.tfgfer.model.serie.FavoriteAnime
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class Repository(val remoteDataSource: RemoteDataSource) {
+class Repository(val remoteDataSource: RemoteDataSource, val localDataSource: LocalDataSource?) {
 
     fun fetchAnimesOnAir(): Flow<List<AnimeData>> {
         return flow {
@@ -70,14 +71,20 @@ class Repository(val remoteDataSource: RemoteDataSource) {
             emit(resultAPI.data.media)
         }
     }
-    /*
-    fun fetchFavoriteEpisodes(): Flow<List<LatestEpisodeItem>> {
-        return flow {
-            val resultAPI = LocalDataSource.getFavoriteEpisodes()
-            //TODO
-            emit(resultAPI as List<LatestEpisodeItem>)
-        }
+    fun getFavoriteAnimes(): Flow<List<FavoriteAnime>> {
+        return localDataSource?.getFavoriteAnimes() ?: flow { emit(emptyList()) }
     }
-     */
+
+    suspend fun addAnimeToFavorites(anime: Anime, slug: String) {
+        localDataSource?.addFavorite(anime, slug)
+    }
+
+    suspend fun removeAnimeFromFavorites(slug: String) {
+        localDataSource?.removeFavorite(slug)
+    }
+
+    fun isAnimeFavorite(slug: String): Flow<Boolean> {
+        return localDataSource?.isAnimeFavorite(slug) ?: flow { emit(false) }
+    }
 
 }
