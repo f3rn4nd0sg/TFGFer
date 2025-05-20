@@ -10,19 +10,18 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/gradient_toolbar"
+        android:background="@drawable/bg_type"
         android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:elevation="4dp"
+            app:navigationIcon="@drawable/ic_arrow_back"
             app:title="@string/animeflv"
             app:titleCentered="true"
-            app:titleTextColor="@android:color/white"
-            app:navigationIcon="@drawable/ic_arrow_back"
-            app:menu="@menu/episode_menu"
-            android:elevation="4dp"/>
+            app:titleTextColor="@android:color/white" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
@@ -83,11 +82,12 @@
                 android:id="@+id/btnDownload"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/descargar"
+                android:layout_marginStart="10dp"
                 android:backgroundTint="#4CAF50"
-                android:textColor="#FFFFFF"
                 android:padding="10dp"
-                android:layout_marginStart="10dp"/>
+                android:text="@string/descargar"
+                android:textColor="#FFFFFF"
+                android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -165,6 +165,7 @@ class EpisodeDetailActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+        /*
         toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_favorite -> {
@@ -178,6 +179,8 @@ class EpisodeDetailActivity : AppCompatActivity() {
                 else -> false
             }
         }
+        */
+
     }
 
     // Función para extraer el número de episodio y el slug de la URL
