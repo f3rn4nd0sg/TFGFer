@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.nav_favorites -> {
                     startActivity(Intent(this, FavoritesActivity::class.java))
-                    true
+                    false
                 }
                 R.id.nav_search -> {
                     startActivity(Intent(this, SearchActivity::class.java))

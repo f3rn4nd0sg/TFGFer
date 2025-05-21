@@ -15,39 +15,43 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.MaterialToolbar
-import edu.pract5.tfgfer.R
 import edu.pract5.tfgfer.AnimeApp
+import edu.pract5.tfgfer.R
 import edu.pract5.tfgfer.ui.animeDetail.AnimeDetailActivity
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class EpisodeDetailActivity : AppCompatActivity() {
+
+    private lateinit var titleTextView: TextView
+    private lateinit var webView: WebView
+    private lateinit var serverTabsLayout: LinearLayout
+    private lateinit var videoContainer: FrameLayout
 
     private lateinit var episodeUrl: String
     private lateinit var episodeSlug: String
     private lateinit var episodeNumber: String
     private lateinit var animeSlug: String
 
-    private lateinit var webView: WebView
-    private lateinit var titleTextView: TextView
-    private lateinit var serverTabsLayout: LinearLayout
-    private lateinit var videoContainer: FrameLayout
-
-    private lateinit var vm: EpisodeDetailViewModel
-
     private var mCustomView: View? = null
     private var mCustomViewCallback: WebChromeClient.CustomViewCallback? = null
-    private var mOriginalOrientation: Int = 0
-    private var mOriginalSystemUiVisibility: Int = 0
+    private var mOriginalSystemUiVisibility = 0
+    private var mOriginalOrientation = 0
+
+    private val vm: EpisodeDetailViewModel by viewModels {
+        val repository = AnimeApp.getRepository(application)
+        EpisodeDetailViewModelFactory(repository, animeSlug, episodeNumber)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_episode_detail)
 
-        // Vistas
+        // Inicializar vistas
         titleTextView = findViewById(R.id.episode_title)
         webView = findViewById(R.id.webViewPlayer)
         serverTabsLayout = findViewById(R.id.serverTabs)
@@ -65,23 +69,65 @@ class EpisodeDetailActivity : AppCompatActivity() {
         Log.d("EpisodeDetail", "episodeSlug: $episodeSlug")
         Log.d("EpisodeDetail", "episodeNumber: $episodeNumber")
 
-        val repository = AnimeApp.getRepository(application)
-        vm = ViewModelProvider(
-            this,
-            EpisodeDetailViewModelFactory(repository, episodeSlug, episodeNumber)
-        )[EpisodeDetailViewModel::class.java]
-
+        // Configurar toolbar
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         toolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
 
+        // Al hacer clic en el título, ir a la página del anime
         titleTextView.setOnClickListener {
-            val intent = Intent(this, AnimeDetailActivity::class.java)
-            intent.putExtra("anime_slug", episodeSlug)
-            startActivity(intent)
+            if (animeSlug.isNotEmpty()) {
+                val intent = Intent(this@EpisodeDetailActivity, AnimeDetailActivity::class.java).apply {
+                    putExtra("anime_slug", animeSlug)
+                }
+                startActivity(intent)
+            }
         }
 
+        // Configurar WebView
+        setupWebView()
+
+        // Observar datos del episodio
+        lifecycleScope.launch {
+            vm.episodeDetail.collectLatest { episode ->
+                if (episode.success) {
+                    // Mostrar título del episodio
+                    titleTextView.text = "${episode.data.title} - Episodio ${episode.data.number}"
+
+                    // Limpiar los botones anteriores
+                    serverTabsLayout.removeAllViews()
+
+                    // Registrar la cantidad de servidores disponibles
+                    Log.d("EpisodeDetailActivity", "Servidores originales: ${episode.data.servers.size}")
+
+                    // Crear botones para cada servidor de la API original
+                    episode.data.servers.forEachIndexed { index, server ->
+                        val button = Button(this@EpisodeDetailActivity).apply {
+                            text = server.name
+                            setOnClickListener {
+                                loadServerInWebView(server.embed)
+                            }
+                            layoutParams = LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                            ).apply {
+                                marginEnd = 8
+                            }
+                        }
+                        serverTabsLayout.addView(button)
+                    }
+
+                    // Si hay servidores disponibles, cargar el primero automáticamente
+                    if (episode.data.servers.isNotEmpty()) {
+                        loadServerInWebView(episode.data.servers[0].embed)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setupWebView() {
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
         webView.settings.mediaPlaybackRequiresUserGesture = false
@@ -95,7 +141,6 @@ class EpisodeDetailActivity : AppCompatActivity() {
                 mCustomView = view
                 mOriginalSystemUiVisibility = window.decorView.systemUiVisibility
                 mOriginalOrientation = requestedOrientation
-                mCustomViewCallback = callback
 
                 val decor = window.decorView as FrameLayout
                 decor.addView(mCustomView, FrameLayout.LayoutParams(
@@ -107,17 +152,16 @@ class EpisodeDetailActivity : AppCompatActivity() {
                     window.setDecorFitsSystemWindows(false)
                     val controller = window.insetsController
                     controller?.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
-                    controller?.systemBarsBehavior =
-                        WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                    controller?.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
                 } else {
                     @Suppress("DEPRECATION")
                     window.decorView.systemUiVisibility = (
-                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                                    or View.SYSTEM_UI_FLAG_FULLSCREEN
-                                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+                                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                                    View.SYSTEM_UI_FLAG_FULLSCREEN or
+                                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                             )
                 }
 
@@ -134,67 +178,39 @@ class EpisodeDetailActivity : AppCompatActivity() {
                 mCustomViewCallback = null
             }
         }
-
-        // Observar datos del ViewModel
-        lifecycleScope.launch {
-            vm.episodeDetail.collect { episode ->
-                Log.d("EpisodeDetail", "episodeDetail response: $episode")
-
-                titleTextView.text = "${episode.data.title} - Episodio ${episode.data.number}"
-                serverTabsLayout.removeAllViews()
-
-                episode.data.servers.forEach { server ->
-                    Log.d("EpisodeDetail", "Adding server button: ${server.name}, embed: ${server.embed}")
-
-                    val serverButton = Button(this@EpisodeDetailActivity).apply {
-                        text = server.name
-                        setOnClickListener { loadServerInWebView(server.embed) }
-                    }
-                    serverTabsLayout.addView(serverButton)
-                }
-
-                episode.data.servers.firstOrNull()?.let {
-                    loadServerInWebView(it.embed)
-                }
-            }
-        }
-    }
-
-    private fun extractEpisodeDetails() {
-        val regex = "https://www3.animeflv.net/ver/([a-zA-Z0-9-]+)-(\\d+)".toRegex()
-        val matchResult = regex.find(episodeUrl)
-        if (matchResult != null) {
-            episodeSlug = matchResult.groupValues[1]
-            episodeNumber = matchResult.groupValues[2]
-            Log.d("EpisodeDetail", "extractEpisodeDetails match: slug=$episodeSlug, number=$episodeNumber")
-        } else {
-            episodeSlug = ""
-            episodeNumber = ""
-            Log.w("EpisodeDetail", "extractEpisodeDetails failed to parse episodeUrl: $episodeUrl")
-        }
     }
 
     private fun loadServerInWebView(embedUrl: String) {
-        Log.d("EpisodeDetail", "Loading embed URL in WebView: $embedUrl")
-
-        val iframeHtml = """
-            <html>
-            <body style="margin:0;padding:0;background:black;">
-                <iframe width="100%" height="100%" 
-                    src="$embedUrl"
-                    frameborder="0" allowfullscreen allow="autoplay"></iframe>
-            </body>
-            </html>
-        """.trimIndent()
-        webView.loadDataWithBaseURL(null, iframeHtml, "text/html", "UTF-8", null)
+        Log.d("EpisodeDetailActivity", "Cargando servidor: $embedUrl")
+        webView.loadUrl(embedUrl)
     }
 
-    override fun onBackPressed() {
-        if (mCustomView != null) {
-            webView.webChromeClient?.onHideCustomView()
+    private fun extractEpisodeDetails() {
+        // Extraer número de episodio y slug desde la URL del episodio
+        // Formato típico: /ver/one-piece-tv-1
+        val parts = episodeUrl.split("/").lastOrNull()?.split("-") ?: listOf()
+
+        if (parts.isNotEmpty()) {
+            episodeNumber = parts.lastOrNull() ?: "1"
+
+            // Si no hay slug específico del anime, usar el proporcionado
+            if (animeSlug.isEmpty()) {
+                // Reconstruir el slug sin el número de episodio
+                episodeSlug = parts.dropLast(1).joinToString("-")
+                animeSlug = episodeSlug
+            } else {
+                episodeSlug = animeSlug
+            }
         } else {
-            super.onBackPressed()
+            episodeNumber = "1"
+            episodeSlug = animeSlug
         }
+    }
+
+    override fun onDestroy() {
+        webView.stopLoading()
+        webView.destroy()
+        super.onDestroy()
     }
 }
 

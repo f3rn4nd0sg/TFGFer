@@ -16,6 +16,7 @@ import edu.pract5.tfgfer.R
 import edu.pract5.tfgfer.databinding.ActivitySearchBinding
 import edu.pract5.tfgfer.ui.adapters.SearchAdapter
 import edu.pract5.tfgfer.ui.animeDetail.AnimeDetailActivity
+import edu.pract5.tfgfer.ui.favorites.FavoritesActivity
 import edu.pract5.tfgfer.ui.main.MainActivity
 
 class SearchActivity : AppCompatActivity() {
@@ -93,13 +94,14 @@ class SearchActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_favorites -> {
-                    // TODO: ir a la de favoritos
-                    true
+                    startActivity(Intent(this, FavoritesActivity::class.java))
+                    false
                 }
                 R.id.nav_search -> true
-                else -> false
+                else -> true
             }
         }
+
 
         bottomNav.selectedItemId = R.id.nav_search
     }

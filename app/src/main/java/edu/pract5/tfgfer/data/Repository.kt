@@ -71,6 +71,7 @@ class Repository(val remoteDataSource: RemoteDataSource, val localDataSource: Lo
             emit(resultAPI.data.media)
         }
     }
+
     fun getFavoriteAnimes(): Flow<List<FavoriteAnime>> {
         return localDataSource?.getFavoriteAnimes() ?: flow { emit(emptyList()) }
     }

@@ -51,15 +51,21 @@
             android:background="#EEEEEE"
             android:padding="5dp">
 
-            <LinearLayout
-                android:id="@+id/serverTabs"
-                android:layout_width="wrap_content"
+            <HorizontalScrollView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="4dp">
+                android:background="#EEEEEE"
+                android:paddingVertical="8dp">
 
-                <!-- Los botones de servidores se añadirán dinámicamente desde el código -->
-            </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/serverTabs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="8dp">
+                    <!-- Los botones de servidores se añadirán dinámicamente desde el código -->
+                </LinearLayout>
+            </HorizontalScrollView>
         </HorizontalScrollView>
 
         <FrameLayout

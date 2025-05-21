@@ -32,5 +32,4 @@ class RemoteDataSource {
 
     suspend fun searchByUrl(url: String) = api.searchByUrl(url)
 
-
 }
