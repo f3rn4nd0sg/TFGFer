@@ -95,15 +95,34 @@
                 app:chipSpacingVertical="4dp"
                 android:padding="4dp" />
 
-            <!-- Sinopsis -->
+            <!-- Sinopsis título -->
             <TextView
-                android:id="@+id/anime_synopsis"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:textColor="#666666"
+                android:textColor="#444444"
                 android:textSize="16sp"
-                tools:text="Sinopsis del anime..." />
+                android:textStyle="bold"/>
+
+            <!-- Sinopsis con ScrollView independiente -->
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:maxHeight="160dp"
+                android:scrollbars="vertical">
+
+                <TextView
+                    android:id="@+id/anime_synopsis"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#666666"
+                    android:textSize="16sp"
+                    android:lineSpacingExtra="4dp"
+                    android:paddingEnd="4dp"
+                    android:paddingBottom="4dp"
+                    tools:text="Sinopsis del anime..." />
+            </ScrollView>
 
             <!-- Título Episodios -->
             <TextView
